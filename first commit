@@ -1,0 +1,28 @@
+# put down the provider role
+provider "aws" {
+    role_arn     = "arn:aws:iam::0000000000:role/example"
+}
+
+# put down code for ec2 instance
+resource "aws_instance" "ServiceVM" {
+   ami = "ami-0a887e401f7654935"
+   instance_type = "t2.micro"
+   key_name = "salterraform"
+   security_groups = ["${aws_security_group.ServiceSG.name}"]
+   tags = {
+       Name = "ServiceVM"
+   }
+}
+
+# create security group
+resource "aws_security_group" "ServiceSG" {
+  name        = "ServiceSG"
+  description = "Allow ssh from my ip"
+  vpc_id      = "vpc-d00000"
+
+  ingress {
+    # (change to whatever ports you need)
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["xx.xx.xx.xxx/32"]
